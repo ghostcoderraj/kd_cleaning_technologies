@@ -1,0 +1,8 @@
+{
+  "framework": "other",
+  "nodeVersion": "22",
+  "entryFile": "app.js",
+  "buildCommand": "npm run build",
+  "startCommand": "npm start",
+  "outputDirectory": "deploy"
+}

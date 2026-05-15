@@ -1,0 +1,8 @@
+{
+  "framework": "other",
+  "nodeVersion": "22",
+  "entryFile": "app.js",
+  "buildCommand": "npm install --omit=dev",
+  "startCommand": "npm start",
+  "outputDirectory": ""
+}

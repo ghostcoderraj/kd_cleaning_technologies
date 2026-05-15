@@ -16,4 +16,12 @@ export default defineConfig({
       entry: "server",
     },
   },
+  vite: {
+    root: ".",
+    build: {
+      rollupOptions: {
+        input: "index.html",
+      },
+    },
+  },
 });

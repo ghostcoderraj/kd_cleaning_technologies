@@ -10,6 +10,8 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+deploy
+hostinger-deploy.zip
 *.local
 
 # Editor directories and files
