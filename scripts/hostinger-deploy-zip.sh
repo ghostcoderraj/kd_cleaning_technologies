@@ -7,36 +7,50 @@ cd "$ROOT"
 OUT="$ROOT/hostinger-deploy.zip"
 
 echo "Building and staging for Hostinger..."
-npm run build:hostinger
+npm run build:vite
 
 if [[ ! -f deploy/public/index.html || ! -f deploy/server/server.js ]]; then
   echo "Staging failed — deploy/public/index.html or deploy/server/server.js missing."
   exit 1
 fi
 
-echo "Creating hostinger-deploy.zip (ready-to-run, no src/dist folders)..."
+if [[ ! -f index.html || ! -f src/main.tsx ]]; then
+  echo "Missing index.html or src/main.tsx at project root."
+  exit 1
+fi
+
+echo "Creating hostinger-deploy.zip..."
 rm -f "$OUT"
 
+# Include index.html + src so Hostinger can run npm run build safely if it ignores pre-built deploy/.
 zip -r "$OUT" \
   app.js \
+  index.html \
   package.json \
   package-lock.json \
   hostinger.json \
   env.hostinger.example \
+  vite.config.ts \
+  tsconfig.json \
+  tsconfig.app.json \
+  tsconfig.node.json \
+  components.json \
+  scripts/hostinger-build.mjs \
+  scripts/hostinger-stage.mjs \
+  public \
+  src \
   deploy \
   -x "*.DS_Store" -x "*/__MACOSX/*"
 
 echo ""
 echo "Created: $OUT"
 echo ""
-echo "Upload in hPanel: Websites → Add Website → Node.js Apps → Upload ZIP"
-echo ""
-echo "Use these settings (important — wrong output dir causes 403):"
+echo "hPanel settings:"
 echo "  Framework:     Other"
 echo "  Node version:  22"
-echo "  Build command: npm install --omit=dev"
+echo "  Build command: npm install && npm run build"
 echo "  Start command: npm start"
 echo "  Entry file:    app.js"
-echo "  Output dir:    (leave EMPTY — do not use dist or deploy/public)"
+echo "  Output dir:    deploy/public"
 echo ""
-echo "Add env vars from env.hostinger.example before deploying."
+echo "GitHub: push index.html, src/main.tsx, and all files above before redeploy."

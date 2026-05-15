@@ -1,0 +1,26 @@
+name: Hostinger build check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run build:vite
+      - name: Verify Hostinger deploy layout
+        run: |
+          test -f deploy/public/index.html
+          test -n "$(ls deploy/public/assets/*.css 2>/dev/null | head -1)"
+          test -f deploy/server/server.js
+          test -f app.js
+          echo "Deploy layout OK"

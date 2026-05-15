@@ -2,7 +2,7 @@
   "framework": "other",
   "nodeVersion": "22",
   "entryFile": "app.js",
-  "buildCommand": "npm run build",
+  "buildCommand": "npm install && npm run build",
   "startCommand": "npm start",
-  "outputDirectory": "deploy"
+  "outputDirectory": "deploy/public"
 }

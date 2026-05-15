@@ -8,14 +8,19 @@ function createSupabaseClient() {
   const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
   const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    const missing = [
-      ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
-      ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
-    ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Lovable Cloud.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+  const isPlaceholder =
+    !SUPABASE_URL ||
+    !SUPABASE_PUBLISHABLE_KEY ||
+    SUPABASE_URL.includes("YOUR_PROJECT") ||
+    SUPABASE_PUBLISHABLE_KEY.includes("your_supabase");
+
+  if (isPlaceholder) {
+    console.warn(
+      "[Supabase] Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in Hostinger env vars, then rebuild.",
+    );
+    return createClient<Database>("https://placeholder.supabase.co", "placeholder-key", {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {

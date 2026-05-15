@@ -30,7 +30,14 @@ await cp(path.join(root, "dist/server"), serverDir, { recursive: true });
 const { default: serverHandler } = await import(`file://${distServer}`);
 const home = await serverHandler.fetch(new Request("http://localhost/"), process.env, {});
 if (home.ok) {
-  await writeFile(path.join(publicDir, "index.html"), await home.text(), "utf8");
+  let html = await home.text();
+  // If JS fails to load, framer-motion leaves content at opacity:0 (blank white page).
+  const fallbackCss =
+    "<style>.hostinger-visible,[style*=\"opacity:0\"]{opacity:1!important;transform:none!important}</style>";
+  html = html.includes("</head>")
+    ? html.replace("</head>", `${fallbackCss}</head>`)
+    : fallbackCss + html;
+  await writeFile(path.join(publicDir, "index.html"), html, "utf8");
   console.log("Wrote deploy/public/index.html (SSR fallback for /)");
 }
 

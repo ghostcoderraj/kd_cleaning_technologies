@@ -30,7 +30,23 @@ const { default: serverHandler } = await import(pathToFileURL(serverEntry).href)
 const app = express();
 app.set("trust proxy", 1);
 
-app.use(express.static(staticDir, { index: ["index.html"] }));
+// Serve JS/CSS/images — never serve index.html here (SSR returns the real page).
+app.use(
+  "/assets",
+  express.static(path.join(staticDir, "assets"), {
+    maxAge: "1y",
+    immutable: true,
+  }),
+);
+app.use("/favicon.svg", express.static(path.join(staticDir, "favicon.svg")));
+app.use("/icons.svg", express.static(path.join(staticDir, "icons.svg")));
+app.use(
+  express.static(staticDir, {
+    index: false,
+    redirect: false,
+    fallthrough: true,
+  }),
+);
 
 const ssrMiddleware = createMiddleware((ctx) =>
   serverHandler.fetch(ctx.request, process.env, ctx),
@@ -40,5 +56,5 @@ app.use(ssrMiddleware);
 
 const port = Number(process.env.PORT) || 3000;
 app.listen(port, "0.0.0.0", () => {
-  console.log(`Listening on port ${port} (static: ${staticDir})`);
+  console.log(`Listening on ${port} | static: ${staticDir}`);
 });

@@ -18,7 +18,9 @@ export default defineConfig({
   },
   vite: {
     root: ".",
+    base: "/",
     build: {
+      assetsDir: "assets",
       rollupOptions: {
         input: "index.html",
       },
