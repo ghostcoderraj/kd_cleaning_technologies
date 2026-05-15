@@ -9,8 +9,9 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && node scripts/hostinger-stage.mjs",
-    "build:hostinger": "npm run build",
+    "build": "node scripts/hostinger-build.mjs",
+    "build:vite": "vite build && node scripts/hostinger-stage.mjs",
+    "build:hostinger": "npm run build:vite",
     "build:dev": "vite build --mode development",
     "start": "node app.js",
     "preview": "vite preview",
